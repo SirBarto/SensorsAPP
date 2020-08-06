@@ -30,7 +30,6 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
@@ -39,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static final int TIME = 100;  //time to delay
 
     private SensorManager sensorManager;
-    private Sensor accelerometer,accelerometer2, gyroscope;
+    private Sensor accelerometerToChart, accelerometer, gyroscope;
 
     private LineChart mChart;
     private Thread thread;
@@ -64,26 +63,26 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         zAccelerometerValue = findViewById(R.id.zValue);
         accuracy = findViewById(R.id.accuracyValue);
         timeStamp = findViewById(R.id.timeStampValue);
-/*
+
         xGyroscopeValue = findViewById(R.id.xGyroscopeValue);
         yGyroscopeValue = findViewById(R.id.yGyroscopeValue);
         zGyroscopeValue = findViewById(R.id.zGyroscopeValue);
-*/
+
         Log.d(TAG, "onCreate: Initializing Sensor Services");
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
-        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-        //accelerometer2 = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        //sensorManager.registerListener(MainActivity.this, accelerometer2, SensorManager.SENSOR_DELAY_GAME);
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        sensorManager.registerListener(MainActivity.this, accelerometer, SensorManager.SENSOR_DELAY_GAME);
         Log.d(TAG, "onCreate: Registered accelerometer listener");
 
-        List<Sensor> sensors = sensorManager.getSensorList(Sensor.TYPE_ALL);
-        for(int i=0; i<sensors.size();i++){
-            Log.d(TAG,"onCreate: Sensor "+i+": "+sensors.get(i).toString());
-        }
+        gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        sensorManager.registerListener(MainActivity.this, gyroscope, SensorManager.SENSOR_DELAY_NORMAL);
+        Log.d(TAG, "onCreate: Registered gyroscope listener");
 
-        if(accelerometer !=null) {
-            sensorManager.registerListener(MainActivity.this,accelerometer,SensorManager.SENSOR_DELAY_GAME);
+        accelerometerToChart = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+
+        if(accelerometerToChart !=null) {
+            sensorManager.registerListener(MainActivity.this, accelerometerToChart,SensorManager.SENSOR_DELAY_GAME);
         }
 
         mChart = (LineChart) findViewById(R.id.chart);
@@ -93,7 +92,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mChart.setDragEnabled(true);
         mChart.setScaleEnabled(true);
         mChart.setDrawGridBackground(false);
-
         mChart.setPinchZoom(true);
         mChart.setBackgroundColor(Color.WHITE);
 
@@ -127,11 +125,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mChart.setDrawBorders(false);
 
         startPlot();
-
-        gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        sensorManager.registerListener(MainActivity.this, gyroscope, SensorManager.SENSOR_DELAY_NORMAL);
-        Log.d(TAG, "onCreate: Registered gyroscope listener");
-
     }
 
     private void addEntry(SensorEvent event){
@@ -204,59 +197,54 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @SuppressLint("SetTextI18n")
     @Override
     public void onSensorChanged(SensorEvent event) {
-/*
-        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            Log.d(TAG, "onSensorChanged ACCELEROMETER: X: " + event.values[0] + " Y: " + event.values[1] + " Z: " + event.values[2]);
 
-            accuracy.setText("accuracy: " + event.accuracy);
-            timeStamp.setText("timeStamp " + event.timestamp);
-            xAccelerometerValue.setText("xValue: "+ event.values[0]);
-            yAccelerometerValue.setText("yValue: "+ event.values[1]);
-            zAccelerometerValue.setText("zValue: "+ event.values[2]);
-            accelerationArray[0] = event.values[0];
-            accelerationArray[1] = event.values[1];
-            accelerationArray[2] = event.values[2];
-
-        }
- */
-/*
-        if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
-            Log.d(TAG, "onSensorChanged GYROSCOPE: X: " + event.values[0] + " Y: " + event.values[1] + " Z: " + event.values[2]);
-
-            xGyroscopeValue.setText("xGyroscopeValue: " + event.values[0]);
-            yGyroscopeValue.setText("yGyroscopeValue: " + event.values[1]);
-            zGyroscopeValue.setText("zGyroscopeValue: " + event.values[2]);
-          gyroscopeArray[0] = event.values[0];
-            gyroscopeArray[1] = event.values[1];
-            gyroscopeArray[2] = event.values[2];
-        }
-*/
-/*
-        xAccelerometer = String.valueOf(accelerationArray[0]);
-        yAccelerometer = String.valueOf(accelerationArray[1]);
-        zAccelerometer = String.valueOf(accelerationArray[2]);
-        xGyroscope = String.valueOf(gyroscopeArray[0]);
-        yGyroscope = String.valueOf(gyroscopeArray[1]);
-        zGyroscope = String.valueOf(gyroscopeArray[2]);
-*/
-        if(plotData){
+        if(plotData) {
             addEntry(event);
-            plotData=false;
-        }
+            plotData = false;
 
-/*
-        dataAGList.add(new DataAG(xAccelerometer,yAccelerometer,zAccelerometer,zGyroscope,yGyroscope,zGyroscope));
-        for(DataAG ag: dataAGList)
-        {
-            Log.d(TAG1, "dataAGLIST: "+ag+"\n");
+            if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+                Log.d(TAG, "onSensorChanged ACCELEROMETER: X: " + event.values[0] + " Y: " + event.values[1] + " Z: " + event.values[2]);
+
+                accuracy.setText("accuracy: " + event.accuracy);
+                timeStamp.setText("timeStamp " + event.timestamp);
+                xAccelerometerValue.setText("xValue: " + event.values[0]);
+                yAccelerometerValue.setText("yValue: " + event.values[1]);
+                zAccelerometerValue.setText("zValue: " + event.values[2]);
+                accelerationArray[0] = event.values[0];
+                accelerationArray[1] = event.values[1];
+                accelerationArray[2] = event.values[2];
+
+            }
+
+            if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
+                Log.d(TAG, "onSensorChanged GYROSCOPE: X: " + event.values[0] + " Y: " + event.values[1] + " Z: " + event.values[2]);
+
+                xGyroscopeValue.setText("xGyroscopeValue: " + event.values[0]);
+                yGyroscopeValue.setText("yGyroscopeValue: " + event.values[1]);
+                zGyroscopeValue.setText("zGyroscopeValue: " + event.values[2]);
+                gyroscopeArray[0] = event.values[0];
+                gyroscopeArray[1] = event.values[1];
+                gyroscopeArray[2] = event.values[2];
+            }
+
+            xAccelerometer = String.valueOf(accelerationArray[0]);
+            yAccelerometer = String.valueOf(accelerationArray[1]);
+            zAccelerometer = String.valueOf(accelerationArray[2]);
+            xGyroscope = String.valueOf(gyroscopeArray[0]);
+            yGyroscope = String.valueOf(gyroscopeArray[1]);
+            zGyroscope = String.valueOf(gyroscopeArray[2]);
+
+            dataAGList.add(new DataAG(xAccelerometer, yAccelerometer, zAccelerometer, zGyroscope, yGyroscope, zGyroscope));
+            for (DataAG ag : dataAGList) {
+                Log.d(TAG1, "dataAGLIST: " + ag + "\n");
+            }
         }
-*/
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        sensorManager.registerListener(this,accelerometer,SensorManager.SENSOR_DELAY_GAME);
+        sensorManager.registerListener(this, accelerometerToChart,SensorManager.SENSOR_DELAY_GAME);
     }
 
     @Override
