@@ -8,6 +8,7 @@
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="228dp"
         android:layout_height="36dp"
         android:text="Accelerometer_demo"
@@ -73,6 +74,16 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.535" />
 
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/chart"
+        android:layout_width="310dp"
+        android:layout_height="166dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.77"></com.github.mikephil.charting.charts.LineChart>
+<!--
     <TextView
         android:layout_width="228dp"
         android:layout_height="36dp"
@@ -117,6 +128,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.835" />
 
+-->
     <Button
         android:id="@+id/button"
         android:layout_width="138dp"

@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 
 public class DataAG {
 
-    private String xAccelerometer,yAccelerometer,zAccelerometer,xGyroscope,yGyroscope,zGyroscope;
+    final private String xAccelerometer,yAccelerometer,zAccelerometer,xGyroscope,yGyroscope,zGyroscope;
 
     public DataAG(String xAccelerometer, String yAccelerometer, String zAccelerometer, String xGyroscope, String yGyroscope, String zGyroscope) {
         this.xAccelerometer = xAccelerometer;
