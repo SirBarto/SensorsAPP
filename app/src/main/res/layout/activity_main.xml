@@ -82,7 +82,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.77"></com.github.mikephil.charting.charts.LineChart>
+        app:layout_constraintVertical_bias="0.77"
+        tools:layout_editor_absoluteY="0dp"
+        tools:layout_editor_absoluteX="8dp"></com.github.mikephil.charting.charts.LineChart>
 <!--
     <TextView
         android:layout_width="228dp"
