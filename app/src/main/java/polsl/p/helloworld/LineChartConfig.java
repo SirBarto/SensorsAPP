@@ -2,7 +2,6 @@ package polsl.p.helloworld;
 
 import android.graphics.Color;
 import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,7 +14,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
-public abstract class LineChartConfig extends AppCompatActivity implements SensorEventListener {
+public abstract class LineChartConfig extends AppCompatActivity {
 
     private LineChart mChart;
     public Thread thread;
@@ -26,12 +25,12 @@ public abstract class LineChartConfig extends AppCompatActivity implements Senso
         mChart = (LineChart) findViewById(R.id.chart);
         mChart.getDescription().setEnabled(true);
         mChart.getDescription().setText("Real time Accelerometer Data Plot");
-        mChart.setTouchEnabled(false);
+        mChart.setTouchEnabled(true);
         mChart.setDragEnabled(true);
         mChart.setScaleEnabled(true);
         mChart.setDrawGridBackground(false);
         mChart.setPinchZoom(true);
-        mChart.setBackgroundColor(Color.WHITE);
+        mChart.setBackgroundColor(Color.LTGRAY);
 
         LineData data = new LineData();
         data.setValueTextColor(Color.WHITE);
@@ -40,20 +39,20 @@ public abstract class LineChartConfig extends AppCompatActivity implements Senso
 
         Legend l = mChart.getLegend();
         l.setForm(Legend.LegendForm.LINE);
-        l.setTextColor(Color.WHITE);
+        l.setTextColor(Color.DKGRAY);
 
         XAxis x1 = mChart.getXAxis();
-        x1.setTextColor(Color.WHITE);
+        x1.setTextColor(Color.BLACK);
         x1.setDrawGridLines(true);
         x1.setAvoidFirstLastClipping(true);
         x1.setEnabled(true);
 
         YAxis leftAxis = mChart.getAxisLeft();
-        leftAxis.setTextColor(Color.WHITE);
+        leftAxis.setTextColor(Color.BLACK);
         leftAxis.setDrawGridLines(false);
         leftAxis.setAxisMaximum(10f);
         leftAxis.setAxisMinimum(0f);
-        leftAxis.setDrawGridLines(true);
+       // leftAxis.setDrawGridLines(true);
 
         YAxis rightAxis = mChart.getAxisRight();
         rightAxis.setEnabled(false);
@@ -76,11 +75,16 @@ public abstract class LineChartConfig extends AppCompatActivity implements Senso
             }
 
             data.addEntry(new Entry(set.getEntryCount(),event.values[0]+5),0);
-            data.notifyDataChanged();
+            //data.notifyDataChanged();
 
             mChart.notifyDataSetChanged();
+            mChart.setVisibleXRange(0,7);
             mChart.setMaxVisibleValueCount(150);
             mChart.moveViewToX(data.getEntryCount());
+
+            if(data.getEntryCount()==500){
+                mChart.clearValues();
+            }
         }
     }
 
@@ -95,6 +99,7 @@ public abstract class LineChartConfig extends AppCompatActivity implements Senso
         set.setDrawCircles(false);
         set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
         set.setCubicIntensity(0.2f);
+
         return set;
     }
 
@@ -109,7 +114,7 @@ public abstract class LineChartConfig extends AppCompatActivity implements Senso
                 while(true){
                     plotData = true;
                     try {
-                        Thread.sleep(100);
+                        Thread.sleep(300);//800
                     }catch (InterruptedException e){
                         e.printStackTrace();
                     }
